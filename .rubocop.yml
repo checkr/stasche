@@ -1,0 +1,26 @@
+Metrics/MethodLength:
+  Max: 20
+
+Style/AndOr:
+  EnforcedStyle: conditionals
+
+Style/Documentation:
+  Enabled: false
+
+Style/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines
+
+Style/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%i': '[]'
+    '%w': '[]'
+    '%W': '[]'
+
+Style/SignalException:
+  EnforcedStyle: semantic
+
+Style/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
