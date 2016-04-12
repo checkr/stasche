@@ -1,6 +1,6 @@
 # stache
 
-[![Circle CI](https://circleci.com/gh/checkr/stache.svg?style=shield&circle-token=5fc36ea99e2d3ad9f0b52d1bd7afeb9b464d3384)](https://circleci.com/gh/checkr/stache)
+[![Circle CI](https://circleci.com/gh/checkr/stache.svg?style=shield&circle-token=c30680de66d1919ea98ee301e888c1f06a9d0adc)](https://circleci.com/gh/checkr/stache)
 [![Code Climate](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/badges/90e62077a5dbf9420544/gpa.svg)](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/feed)
 [![Test Coverage](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/badges/90e62077a5dbf9420544/coverage.svg)](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/badges)
 
