@@ -7,7 +7,9 @@ group :development do
 end
 
 group :test do
+  gem 'byebug'
   gem 'codeclimate-test-reporter', '~> 0.4.0', require: false
+  gem 'pry'
 end
 
 group :development, :test do
