@@ -6,7 +6,7 @@ end
 
 require 'database_cleaner'
 require 'redis'
-require 'stache'
+require 'stasche'
 
 RSpec.configure do |config|
   config.color = true

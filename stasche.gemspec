@@ -1,13 +1,13 @@
-require File.expand_path('../lib/stache/version', __FILE__)
+require File.expand_path('../lib/stasche/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.name        = 'stache'
-  gem.version     = Stache::VERSION
+  gem.name        = 'stasche'
+  gem.version     = Stasche::VERSION
   gem.authors     = ['Jon Whiteaker', 'Eric Psalmond']
   gem.email       = %w[eng@checkr.com]
   gem.summary     = 'Stash + Cache = Profit'
   gem.description = 'Utility to enable sharing objects across remote sessions.'
-  gem.homepage    = 'https://github.com/checkr/stache'
+  gem.homepage    = 'https://github.com/checkr/stasche'
   gem.files       = Dir['lib/**/*']
 
   gem.required_ruby_version = '>= 2.2.3'

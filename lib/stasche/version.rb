@@ -1,3 +1,3 @@
-module Stache
+module Stasche
   VERSION = '1.0.0'.freeze
 end

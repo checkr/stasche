@@ -1,9 +1,9 @@
 require 'json'
 require 'securerandom'
-require 'stache/configuration'
-require 'stache/store'
+require 'stasche/configuration'
+require 'stasche/store'
 
-module Stache
+module Stasche
   class Client
 
     attr_reader :store, :namespace
@@ -19,7 +19,7 @@ module Stache
       klass = Store.const_get(type.capitalize)
 
       @store = klass.new(url: configuration.url)
-      @namespace = configuration.namespace || 'stache'
+      @namespace = configuration.namespace || 'stasche'
     end
 
     def get(key, expire: false)
