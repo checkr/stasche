@@ -1,4 +1,4 @@
-RSpec.describe Stache::Client do
+RSpec.describe Stasche::Client do
   context 'when passed a configuration block' do
     let(:client) do
       described_class.new do |config|

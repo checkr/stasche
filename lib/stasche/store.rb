@@ -1,10 +1,10 @@
-module Stache
+module Stasche
   module Store
     class KeyAlreadyExistsError < StandardError
 
       def initialize(key)
         super(
-          "Key #{key} already set in stache. Use `force: true` to override."
+          "Key #{key} already set in stasche. Use `force: true` to override."
         )
       end
 
@@ -12,4 +12,4 @@ module Stache
   end
 end
 
-require 'stache/store/redis'
+require 'stasche/store/redis'

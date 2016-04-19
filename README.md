@@ -1,6 +1,6 @@
-# stache
+# stasche
 
-[![Circle CI](https://circleci.com/gh/checkr/stache.svg?style=shield&circle-token=c30680de66d1919ea98ee301e888c1f06a9d0adc)](https://circleci.com/gh/checkr/stache)
+[![Circle CI](https://circleci.com/gh/checkr/stasche.svg?style=shield&circle-token=c30680de66d1919ea98ee301e888c1f06a9d0adc)](https://circleci.com/gh/checkr/stasche)
 [![Code Climate](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/badges/90e62077a5dbf9420544/gpa.svg)](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/feed)
 [![Test Coverage](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/badges/90e62077a5dbf9420544/coverage.svg)](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/badges)
 
@@ -10,12 +10,12 @@ sessions.
 ## Configuration
 
 ```rb
-require 'stache'
+require 'stasche'
 
-Stache.configuration do |configuration|
+Stasche.configure do |configuration|
   configuration.store     = :redis
-  configuration.namespace = 'custom-stache'
-  configuration.url       = ENV['STACHE_REDIS_URL']
+  configuration.namespace = 'custom-stasche'
+  configuration.url       = ENV['STASCHE_REDIS_URL']
 end
 ```
 
@@ -25,23 +25,23 @@ end
 
 ```rb
 # Session A
-Stache.set(user_emails: User.where(id: ids).pluck(:email))
+Stasche.set(user_emails: User.where(id: ids).pluck(:email))
 
 # Session B
-user_emails = Stache.get(:user_emails)
+user_emails = Stasche.get(:user_emails)
 ```
 
 ### Pushing/Peeking/Popping values
 
 ```rb
 # Session A
-Stache << User.where(id: ids).pluck(:email)
+Stasche << User.where(id: ids).pluck(:email)
 # => "CKt6MiweFP8jc3ahmz5FZA"
 
 # Session B
-Stache.peek
+Stasche.peek
 # => [...]
-Stache.pop # dequeues last value, deleting from cache
+Stasche.pop # dequeues last value, deleting from cache
 # => [...]
 ```
 
@@ -49,6 +49,6 @@ Stache.pop # dequeues last value, deleting from cache
 
 ```rb
 # Listing stored keys
-Stache.ls
+Stasche.ls
 # => [...]
 ```

@@ -1,4 +1,4 @@
-module Stache
+module Stasche
   module Store
     class Redis
 
