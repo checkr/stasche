@@ -13,6 +13,27 @@ RSpec.describe Stache do
           described_class::Client
         )
       end
+
+      %i[
+        get
+        set
+        ls
+        count
+        push
+        <<
+        peek
+        last
+        pop
+        del
+      ].each do |method_name|
+        it "delegates #{method_name} to `client`" do
+          allow(described_class.client).to receive(method_name)
+
+          described_class.method(method_name).call
+
+          expect(described_class.client).to have_received(method_name)
+        end
+      end
     end
   end
 
