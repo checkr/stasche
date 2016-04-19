@@ -1,7 +1,7 @@
 require 'stache/client'
 
 module Stache
-  extend Forwardable
+  extend SingleForwardable
 
   delegate Client.public_instance_methods(false) => :client
 
