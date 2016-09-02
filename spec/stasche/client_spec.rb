@@ -49,6 +49,19 @@ RSpec.describe Stasche::Client do
     end
   end
 
+  describe '#set' do
+    let(:client) { described_class.new }
+
+    context 'when key already exists' do
+      before { client.set(foo: 'bar') }
+
+      it 'throws the proper exception' do
+        error_class = Stasche::Store::KeyAlreadyExistsError
+        expect { client.set(foo: 'bar') }.to raise_error(error_class)
+      end
+    end
+  end
+
   describe '#ls' do
     let(:client) { described_class.new }
 

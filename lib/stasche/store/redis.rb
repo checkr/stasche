@@ -15,7 +15,7 @@ module Stasche
       def set(key, value, ttl: 3600, force: false)
         ok = cache.set(key, value, ex: ttl, nx: !force)
 
-        fail KeyAlreadyExists, key unless ok
+        fail KeyAlreadyExistsError, key unless ok
 
         ok
       end
