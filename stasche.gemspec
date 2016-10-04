@@ -13,9 +13,9 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = '>= 2.2.3'
 
   gem.add_dependency 'json', '< 2.0'
+  gem.add_dependency 'redis', '>= 3.2'
 
   gem.add_development_dependency 'rake',  '~> 10.0'
   gem.add_development_dependency 'rspec', '~> 3.0'
   gem.add_development_dependency 'database_cleaner', '~> 1.5'
-  gem.add_development_dependency 'redis', '>= 3.2'
 end
