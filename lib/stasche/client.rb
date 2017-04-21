@@ -25,12 +25,12 @@ module Stasche
     def get(key, expire: false)
       value = store.get("#{namespace}:#{key}")
       del(key) if expire
-      value.nil? || value.empty? ? nil : JSON.load(value)
+      value.nil? || value.empty? ? nil : JSON.load(value)['value']
     end
 
     def set(values, options = {})
       last_value = values.inject(nil) do |_, (key, value)|
-        json = value.to_json
+        json = { value: value }.to_json
         store.set("#{namespace}:#{key}", json, options)
         key
       end
