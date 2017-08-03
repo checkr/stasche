@@ -28,6 +28,14 @@ module Stasche
         cache.keys(pattern)
       end
 
+      def lpop(key)
+        cache.lpop(key)
+      end
+
+      def lpush(key, value)
+        cache.lpush(key, value)
+      end
+
       private
 
       def cache

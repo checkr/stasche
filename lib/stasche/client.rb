@@ -6,6 +6,8 @@ require 'stasche/store'
 module Stasche
   class Client
 
+    RPC_RATELIMIT = 0.1
+
     attr_reader :store, :namespace
 
     def initialize(options = {})
@@ -25,7 +27,7 @@ module Stasche
     def get(key, expire: false)
       value = store.get("#{namespace}:#{key}")
       del(key) if expire
-      value.nil? || value.empty? ? nil : JSON.load(value)['value']
+      value.nil? || value.empty? ? nil : JSON.parse(value)['value']
     end
 
     def set(values, options = {})
@@ -73,6 +75,56 @@ module Stasche
 
     def del(key)
       store.del("#{namespace}:#{key}")
+    end
+
+    def rpc(name)
+      loop do
+        task_id      = wait_for_rpc_request(name)
+        args, kwargs = retrieve_rpc_request(name, task_id)
+
+        begin
+          res = build_rpc_response(name, task_id, false, yield(*args, **kwargs))
+        rescue Interrupt
+          store.del("#{namespace}:#{name}")
+          break
+        rescue => e
+          res = build_rpc_response(name, task_id, true, e.to_s)
+        end
+        set(res, force: true)
+      end
+    end
+
+    def call(name, *args, **kwargs)
+      task_id = SecureRandom.urlsafe_base64
+      set({ "#{name}:#{task_id}:args" => [args, kwargs] }, force: true)
+      store.lpush("#{namespace}:#{name}", task_id)
+      sleep(RPC_RATELIMIT) until get("#{name}:#{task_id}:ready")
+      del("#{name}:#{task_id}:ready")
+      val = get("#{name}:#{task_id}:value", expire: true)
+      fail val if get("#{name}:#{task_id}:error", expire: true)
+      val
+    end
+
+    private
+
+    def wait_for_rpc_request(name)
+      loop do
+        sleep(RPC_RATELIMIT)
+        task_id = store.lpop("#{namespace}:#{name}")
+        return task_id unless task_id.nil?
+      end
+    end
+
+    def retrieve_rpc_request(name, task_id)
+      get("#{name}:#{task_id}:args", expire: true)
+    end
+
+    def build_rpc_response(name, task_id, error, value)
+      {
+        "#{name}:#{task_id}:ready" => true,
+        "#{name}:#{task_id}:error" => error,
+        "#{name}:#{task_id}:value" => value
+      }
     end
 
   end
