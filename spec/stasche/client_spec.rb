@@ -1,6 +1,7 @@
 RSpec.describe Stasche::Client do
   context 'when passed a configuration block' do
-    let(:client) do described_class.new do |config|
+    let(:client) do
+      described_class.new do |config|
         config.namespace = 'test'
       end
     end
@@ -171,9 +172,16 @@ RSpec.describe Stasche::Client do
 
     after { Thread.kill(rpc) }
 
-    it 'adds two numbers' do
-      expect(client.call(:add, 1, 2)).to eq(3)
+    context 'when used correctly' do
+      it 'adds two numbers' do
+        expect(client.call(:add, 1, 2)).to eq(3)
+      end
+    end
+
+    context 'when an exception raised' do
+      it 'raises an error' do
+        expect { client.call(:add, 'str', 1) }.to raise_error(Exception)
+      end
     end
   end
-
 end
