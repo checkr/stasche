@@ -159,29 +159,4 @@ RSpec.describe Stasche::Client do
       expect(client.ls).to be_empty
     end
   end
-
-  describe '#rpc' do
-    let(:client) { described_class.new }
-    let!(:rpc) do
-      Thread.new do
-        client.rpc(:add) do |a, b|
-          a + b
-        end
-      end
-    end
-
-    after { Thread.kill(rpc) }
-
-    context 'when used correctly' do
-      it 'adds two numbers' do
-        expect(client.call(:add, 1, 2)).to eq(3)
-      end
-    end
-
-    context 'when an exception raised' do
-      it 'raises an error' do
-        expect { client.call(:add, 'str', 1) }.to raise_error(Exception)
-      end
-    end
-  end
 end
