@@ -1,4 +1,6 @@
 require 'stasche/client'
+require 'redis'
+require 'aws-sdk'
 
 module Stasche
   extend SingleForwardable

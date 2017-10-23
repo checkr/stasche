@@ -6,8 +6,6 @@ require 'stasche/store'
 module Stasche
   class Client
 
-    RPC_RATELIMIT = 0.1
-
     attr_reader :store, :namespace
 
     def initialize(options = {})
@@ -20,12 +18,15 @@ module Stasche
       type  = configuration.store || :redis
       klass = Store.const_get(type.capitalize)
 
-      @store = klass.new(url: configuration.url)
+      @store = klass.new(configuration)
+      @encrypter = configuration.encrypter
+      @encryption_key = configuration.encryption_key
       @namespace = configuration.namespace || 'stasche'
     end
 
     def get(key, expire: false)
-      value = store.get("#{namespace}:#{key}")
+      encrypted_value = store.get("#{namespace}:#{key}")
+      value = decrypt(encrypted_value)
       del(key) if expire
       value.nil? || value.empty? ? nil : JSON.parse(value)['value']
     end
@@ -33,13 +34,12 @@ module Stasche
     def set(values, options = {})
       last_value = values.inject(nil) do |_, (key, value)|
         json = { value: value }.to_json
-        store.set("#{namespace}:#{key}", json, options)
+        encrypted_json = encrypt(json)
+        store.set("#{namespace}:#{key}", encrypted_json, options)
         key
       end
 
-      result = store.set("#{namespace}_last", last_value, force: true)
-
-      result == 'OK'
+      store.set("#{namespace}_last", last_value.to_s, force: true)
     end
 
     def ls(pattern = '*')
@@ -77,54 +77,14 @@ module Stasche
       store.del("#{namespace}:#{key}")
     end
 
-    def rpc(name)
-      loop do
-        task_id      = wait_for_rpc_request(name)
-        args, kwargs = retrieve_rpc_request(name, task_id)
-
-        begin
-          res = build_rpc_response(name, task_id, false, yield(*args, **kwargs))
-        rescue Interrupt
-          store.del("#{namespace}:#{name}")
-          break
-        rescue => e
-          res = build_rpc_response(name, task_id, true, e.to_s)
-        end
-        set(res, force: true)
-      end
-    end
-
-    def call(name, *args, **kwargs)
-      task_id = SecureRandom.urlsafe_base64
-      set({ "#{name}:#{task_id}:args" => [args, kwargs] }, force: true)
-      store.lpush("#{namespace}:#{name}", task_id)
-      sleep(RPC_RATELIMIT) until get("#{name}:#{task_id}:ready")
-      del("#{name}:#{task_id}:ready")
-      val = get("#{name}:#{task_id}:value", expire: true)
-      fail val if get("#{name}:#{task_id}:error", expire: true)
-      val
-    end
-
     private
 
-    def wait_for_rpc_request(name)
-      loop do
-        sleep(RPC_RATELIMIT)
-        task_id = store.lpop("#{namespace}:#{name}")
-        return task_id unless task_id.nil?
-      end
+    def encrypt(value)
+      @encrypter.encrypt(@encryption_key, value)
     end
 
-    def retrieve_rpc_request(name, task_id)
-      get("#{name}:#{task_id}:args", expire: true)
-    end
-
-    def build_rpc_response(name, task_id, error, value)
-      {
-        "#{name}:#{task_id}:ready" => true,
-        "#{name}:#{task_id}:error" => error,
-        "#{name}:#{task_id}:value" => value
-      }
+    def decrypt(encrypted_value)
+      @encrypter.decrypt(@encryption_key, encrypted_value)
     end
 
   end

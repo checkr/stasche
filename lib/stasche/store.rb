@@ -13,3 +13,4 @@ module Stasche
 end
 
 require 'stasche/store/redis'
+require 'stasche/store/s3'

@@ -9,15 +9,61 @@ sessions.
 
 ## Configuration
 
+### Using Redis as the backend store
 ```rb
 require 'stasche'
 
+class MyEncrypter
+  def self.encrypt(key, plaintext)
+    ...
+  end
+
+  def self.decrypt(key, ciphertext)
+    ...
+  end
+end
+
 Stasche.configure do |configuration|
-  configuration.store     = :redis
-  configuration.namespace = 'custom-stasche'
-  configuration.url       = ENV['STASCHE_REDIS_URL']
+  configuration.store          = :redis
+  configuration.namespace      = 'custom-stasche'
+  configuration.url            = ENV['STASCHE_REDIS_URL']
+  configuration.encrypter      = MyEncrypter
+  configuration.encryption_key = 'my_super_secret_encryption_key'
 end
 ```
+
+### Using S3 as the backend store
+```rb
+require 'stasche'
+
+class MyEncrypter
+  def self.encrypt(key, plaintext)
+    ...
+  end
+
+  def self.decrypt(key, ciphertext)
+    ...
+  end
+end
+
+Stasche.configure do |configuration|
+  configuration.store             = :s3
+  configuration.namespace         = 'custom-stasche'
+  configuration.region            = 'us-east-1'
+  configuration.bucket            = 'my-s3-bucket'
+  configuration.access_key_id     = 'my_aws_access_key_id'
+  configuration.secret_access_key = 'my_aws_secret_access_key'
+  configuration.encrypter         = MyEncrypter
+  configuration.encryption_key    = 'my_super_secret_encryption_key'
+end
+```
+
+### Encryption
+Stasche encrypts all data before storing it in your backend of choice.  As shown
+in the example above, you must pass an object (in the examples a class is used)
+which responds to `encrypt` and `decrypt` methods.  Both of these methods must
+accept two arguments; the encryption key, and the plaintext/ciphertext to
+encrypt/decrypt.
 
 ## Usage
 
