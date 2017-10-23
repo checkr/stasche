@@ -20,7 +20,9 @@ RSpec.describe Stasche::Client do
   end
 
   describe '#get' do
-    let(:client) { described_class.new }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: 'foo')
+    end
 
     before { client.set(foo: 'bar') }
 
@@ -50,7 +52,9 @@ RSpec.describe Stasche::Client do
   end
 
   describe '#set' do
-    let(:client) { described_class.new }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: 'foo')
+    end
 
     context 'when key already exists' do
       before { client.set(foo: 'bar') }
@@ -63,7 +67,9 @@ RSpec.describe Stasche::Client do
   end
 
   describe '#ls' do
-    let(:client) { described_class.new }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: 'foo')
+    end
 
     context 'when not passed a match pattern' do
       before { client.set(foo: 'bar', baz: 'qux') }
@@ -83,7 +89,9 @@ RSpec.describe Stasche::Client do
   end
 
   describe '#count' do
-    let(:client) { described_class.new }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: 'foo')
+    end
 
     before { client.set(foo: 'bar', baz: 'qux', bar: 'drink') }
 
@@ -93,7 +101,9 @@ RSpec.describe Stasche::Client do
   end
 
   describe '#push' do
-    let(:client) { described_class.new }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: 'foo')
+    end
 
     before { client.push('foo') }
 
@@ -103,7 +113,9 @@ RSpec.describe Stasche::Client do
   end
 
   describe '#<<' do
-    let(:client) { described_class.new }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: 'foo')
+    end
 
     before { client << 'foo' }
 
@@ -113,7 +125,9 @@ RSpec.describe Stasche::Client do
   end
 
   describe '#peek' do
-    let(:client) { described_class.new }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: 'foo')
+    end
 
     before { client << 'foo' }
 
@@ -129,7 +143,9 @@ RSpec.describe Stasche::Client do
   end
 
   describe '#last' do
-    let(:client) { described_class.new }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: 'foo')
+    end
 
     before { client << 'foo' }
 
@@ -145,7 +161,9 @@ RSpec.describe Stasche::Client do
   end
 
   describe '#pop' do
-    let(:client) { described_class.new }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: 'foo')
+    end
 
     before { client << 'foo' }
 

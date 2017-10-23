@@ -8,6 +8,18 @@ require 'database_cleaner'
 require 'redis'
 require 'stasche'
 
+class Encrypter
+
+  def self.encrypt(_key, plaintext)
+    plaintext
+  end
+
+  def self.decrypt(_key, ciphertext)
+    ciphertext
+  end
+
+end
+
 RSpec.configure do |config|
   config.color = true
   config.tty   = true

@@ -18,12 +18,15 @@ module Stasche
       type  = configuration.store || :redis
       klass = Store.const_get(type.capitalize)
 
-      @store = klass.new(url: configuration.url)
+      @store = klass.new(configuration)
+      @encrypter = configuration.encrypter
+      @encryption_key = configuration.encryption_key
       @namespace = configuration.namespace || 'stasche'
     end
 
     def get(key, expire: false)
-      value = store.get("#{namespace}:#{key}")
+      encrypted_value = store.get("#{namespace}:#{key}")
+      value = decrypt(encrypted_value)
       del(key) if expire
       value.nil? || value.empty? ? nil : JSON.parse(value)['value']
     end
@@ -31,13 +34,12 @@ module Stasche
     def set(values, options = {})
       last_value = values.inject(nil) do |_, (key, value)|
         json = { value: value }.to_json
-        store.set("#{namespace}:#{key}", json, options)
+        encrypted_json = encrypt(json)
+        store.set("#{namespace}:#{key}", encrypted_json, options)
         key
       end
 
-      result = store.set("#{namespace}_last", last_value, force: true)
-
-      result == 'OK'
+      store.set("#{namespace}_last", last_value.to_s, force: true)
     end
 
     def ls(pattern = '*')
@@ -73,6 +75,16 @@ module Stasche
 
     def del(key)
       store.del("#{namespace}:#{key}")
+    end
+
+    private
+
+    def encrypt(value)
+      @encrypter.encrypt(@encryption_key, value)
+    end
+
+    def decrypt(encrypted_value)
+      @encrypter.decrypt(@encryption_key, encrypted_value)
     end
 
   end
