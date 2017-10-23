@@ -4,8 +4,8 @@ module Stasche
 
       attr_reader :url
 
-      def initialize(url: nil)
-        @url = url
+      def initialize(configuration)
+        @url = configuration[:url]
       end
 
       def get(key)
@@ -17,7 +17,7 @@ module Stasche
 
         fail KeyAlreadyExistsError, key unless ok
 
-        ok
+        ok == 'OK'
       end
 
       def del(key)
@@ -31,11 +31,7 @@ module Stasche
       private
 
       def cache
-        @cache ||= begin
-          require 'redis'
-
-          ::Redis.new(url: url)
-        end
+        @cache ||= ::Redis.new(url: url)
       end
 
     end
