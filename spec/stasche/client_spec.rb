@@ -19,6 +19,17 @@ RSpec.describe Stasche::Client do
     end
   end
 
+  describe '#inspect' do
+    let(:encryption_key) { 'super_secret' }
+    let(:client) do
+      described_class.new(encrypter: Encrypter, encryption_key: encryption_key)
+    end
+
+    it 'returns a string which does not contain the encryption key' do
+      expect(client.inspect).not_to include(encryption_key)
+    end
+  end
+
   describe '#get' do
     let(:client) do
       described_class.new(encrypter: Encrypter, encryption_key: 'foo')
