@@ -26,7 +26,7 @@ module Stasche
 
     def get(key, expire: false)
       encrypted_value = store.get("#{namespace}:#{key}")
-      value = decrypt(encrypted_value)
+      value = encrypted_value.nil? ? nil : decrypt(encrypted_value)
       del(key) if expire
       value.nil? || value.empty? ? nil : JSON.parse(value)['value']
     end
