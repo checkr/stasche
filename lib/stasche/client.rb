@@ -77,6 +77,11 @@ module Stasche
       store.del("#{namespace}:#{key}")
     end
 
+    def inspect
+      address = "0x#{(object_id << 1).to_s(16).rjust(14, '0')}"
+      "\#<#{self.class}:#{address}>"
+    end
+
     private
 
     def encrypt(value)
