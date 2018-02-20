@@ -14,7 +14,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'json', '>= 1.8'
   gem.add_dependency 'redis', '>= 3.2'
-  gem.add_dependency 'aws-sdk', '>= 2'
+  gem.add_dependency 'aws-sdk-s3', '~> 1'
 
   gem.add_development_dependency 'rake',  '~> 10.0'
   gem.add_development_dependency 'rspec', '~> 3.0'
