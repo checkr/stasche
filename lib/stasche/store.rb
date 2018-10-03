@@ -4,7 +4,8 @@ module Stasche
 
       def initialize(key)
         super(
-          "Key #{key} already set in stasche. Use `force: true` to override."
+          "Key #{key} already set in stasche. Use `force: true` to override.\n"\
+          "Example: Stasche.set({foo: 'bar'}, force: true)"
         )
       end
 

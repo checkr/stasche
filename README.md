@@ -77,6 +77,16 @@ Stasche.set(user_emails: User.where(id: ids).pluck(:email))
 user_emails = Stasche.get(:user_emails)
 ```
 
+### Setting options
+The set method allows you to add an `options` hash as a second parameter, for example to set a given key even if already exists
+```rb
+# Session A
+Stasche.set({foo: 'bar'}, force: true)
+
+# Session B
+foo_value = Stasche.get(:foo)
+```
+
 ### Pushing/Peeking/Popping values
 
 ```rb

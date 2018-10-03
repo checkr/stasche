@@ -74,6 +74,10 @@ RSpec.describe Stasche::Client do
         error_class = Stasche::Store::KeyAlreadyExistsError
         expect { client.set(foo: 'bar') }.to raise_error(error_class)
       end
+
+      it 'does not throws an exception if forced' do
+        expect { client.set({ foo: 'bar' }, force: true) }.to_not raise_error
+      end
     end
   end
 
