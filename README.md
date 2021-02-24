@@ -1,50 +1,14 @@
-# stasche
+# Stasche
 
-[![Circle CI](https://circleci.com/gh/checkr/stasche.svg?style=shield&circle-token=c30680de66d1919ea98ee301e888c1f06a9d0adc)](https://circleci.com/gh/checkr/stasche)
-[![Code Climate](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/badges/90e62077a5dbf9420544/gpa.svg)](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/feed)
-[![Test Coverage](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/badges/90e62077a5dbf9420544/coverage.svg)](https://codeclimate.com/repos/5709c3dc4b265e0077000f93/badges)
-
-Utility to "stash" objects and enable sharing across separate or remote
-sessions.
+Utility to "stash" objects and enable sharing across separate ruby sessions.
 
 ## Configuration
 
-### Using Redis as the backend store
+In order to access Stasche, you will need to configure it in each sesssion you want to have access to the data. This can be done using either Redis or S3 as the backend store.
+
+### Using S3
 ```rb
 require 'stasche'
-
-class MyEncrypter
-  def self.encrypt(key, plaintext)
-    ...
-  end
-
-  def self.decrypt(key, ciphertext)
-    ...
-  end
-end
-
-Stasche.configure do |configuration|
-  configuration.store          = :redis
-  configuration.namespace      = 'custom-stasche'
-  configuration.url            = ENV['STASCHE_REDIS_URL']
-  configuration.encrypter      = MyEncrypter
-  configuration.encryption_key = 'my_super_secret_encryption_key'
-end
-```
-
-### Using S3 as the backend store
-```rb
-require 'stasche'
-
-class MyEncrypter
-  def self.encrypt(key, plaintext)
-    ...
-  end
-
-  def self.decrypt(key, ciphertext)
-    ...
-  end
-end
 
 Stasche.configure do |configuration|
   configuration.store             = :s3
@@ -58,16 +22,48 @@ Stasche.configure do |configuration|
 end
 ```
 
+### Using Redis
+```rb
+require 'stasche'
+
+Stasche.configure do |configuration|
+  configuration.store          = :redis
+  configuration.namespace      = 'custom-stasche'
+  configuration.url            = ENV['STASCHE_REDIS_URL']
+  configuration.encrypter      = MyEncrypter
+  configuration.encryption_key = 'my_super_secret_encryption_key'
+end
+```
+
+
 ### Encryption
-Stasche encrypts all data before storing it in your backend of choice.  As shown
-in the example above, you must pass an object (in the examples a class is used)
-which responds to `encrypt` and `decrypt` methods.  Both of these methods must
-accept two arguments; the encryption key, and the plaintext/ciphertext to
-encrypt/decrypt.
+
+The configuration requires an `encrypter`. Existing usage on the monolith uses `SimpleboxCryptr`, but you may also supply a different class as long as it supports the interface below
+```rb
+class MyEncrypter
+  def self.encrypt(key, plaintext)
+    ...
+  end
+
+  def self.decrypt(key, ciphertext)
+    ...
+  end
+end
+```
+
+
+## Thor
+
+Stasche is automatically configured when using [thor scripts](https://checkr.atlassian.net/wiki/spaces/RD/pages/493096635/Monolith+Thor+Scripts).
+
+In order to set or get keys used by your thor script, you will need to configure stasche locally with the same values. The configuration for thor is defined at: https://gitlab.checkrhq.net/platform/checkr/-/blob/master/lib/scripts/base.thor#L4-13 
+
 
 ## Usage
 
 ### Setting/Retrieving values
+
+When setting a key, please use a reasonably specific name for your data. This reduces the chance of conflicing with other keys. If you are unsure whether a key is already used, you can run `Stasche.get(:key_name)` and see if a value is returned.
 
 ```rb
 # Session A
@@ -95,7 +91,7 @@ Stasche << User.where(id: ids).pluck(:email)
 # => "CKt6MiweFP8jc3ahmz5FZA"
 
 # Session B
-Stasche.peek
+Stasche.peek # returns last value, without removing from cache
 # => [...]
 Stasche.pop # dequeues last value, deleting from cache
 # => [...]
