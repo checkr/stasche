@@ -35,7 +35,7 @@ module Stasche
       last_value = values.inject(nil) do |_, (key, value)|
         json = { value: value }.to_json
         encrypted_json = encrypt(json)
-        store.set("#{namespace}:#{key}", encrypted_json, options)
+        store.set("#{namespace}:#{key}", encrypted_json, **options)
         key
       end
 
